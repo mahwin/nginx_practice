@@ -1,0 +1,65 @@
+1. nginx란 ? 
+
+=> 리버스 프록시, 로드 벨런서, 캐시, 웹서버 등의 기능을 함
+
+nginx의 구성은?
+
+=> 마스터와 한 개 이상의 워커 프로세스로 구성됨
+
+client  요청 => master가 worker에게 요청을 전달 해서 실질적인 일은 worker가 하게 됨.
+ (워커는 마스터 프로세스의 자식 관계)
+
+
+2. 설정파일
+
+설정파일은 /etc/nginx/nginx.conf에 위치
+설정파일은 디렉티브로 관리
+=> 간단 디렉티브와 블록 디렉티브로 분류
+
+!! 설정 끝은 항상 세미클론으로 표시
+
+ex)
+
+server {                      블록
+  location / {                블록
+    root / data/www;          심플
+  }
+}
+
+.include 문법 => 한 개의 파일에서 관리하기 힘들어서 파일을 쪼갤때 사용하는 문법
+
+include /etc/nginx/conf.d/*.conf; =>  .conf로 끝나는 파일을 설정 파일로 불러 들이겠다는 의미
+
+
+
+3.server block 
+
+nginx를 어떻게 호출할지를 설정하는 블럭
+
+server {
+  listen     80;    => 어떤 포트로 받을지
+  server_name 도메인  => 어떤 도메인?
+}
+
+nginx -t  nginx 설정파일이 문법에 맞게 작성 되어있는지 검사해줌.
+
+4.http block
+
+http 프로토콜 사용할 때
+
+5. location block
+요청 url를 분석하여 세부 설정을 할 때 사용
+
+location / {
+ / => 부분이 매칭되면 안에 블록 안의 코드로    
+}
+
+6. file return 
+=> 정적웹이면 이것만 사용해서 만들 수 도 있겠다.
+
+ex => 
+location = / {
+  root index.html 이런식으로
+}
+
+
