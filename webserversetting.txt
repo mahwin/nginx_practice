@@ -1,0 +1,51 @@
+웹서버 셋팅
+
+아파치로 해보자!  
+
+sudo apt-get install apache2 아파치를 다운받고,
+
+sudo a2enmod ssl => 아파치 ssl 모듈을 활성화함
+
+/etc/apache2/ssl/* 파일에 인증서 내용 저장
+
+sudo chown -R root:root /etc/apache2/ssl
+
+저 디렉토리에 있는 모든 파일을 소유자가 루트로 변경한다는 명령임.
+ls -al 하면 소유자가 변경됐다는 사실을 알 수 있음
+
+sudo chomd 600 /etc/apache2/ssl/*.*
+파일의 권한을 600(소유자만 읽기, 쓰기 허용)
+ls -al하면 -rw--------이렇게 파일이 변경된 것을 알 수 있음!;
+
+sudo chmod 700 /etc/apache2/ssl;
+디렉토리 권한을 700(소유자만 읽기, 쓰기, 실행 허용)
+ls -al하면 
+.
+..파일들이 drwx------이렇게 읽고 쓰고 실행하는 것을 허용하게 변함.
+
+virtualhost를 설정.
+virtualhost란? 하나의 웹서퍼(지금은 아파치임)에서 여러개의 서비스를 도메인 별로 운영할 수 있도록 돕는 apache의 기능임.
+기본 설정 파일인 /etc/aapache2/sites-available/default-ssl을 수정함
+
+sudo nano /etc/aapache2/sites-available/default-ssl
+
+SLCertificateFile    /etc/apache2/ssl/ssl.crt
+SSLCertificateKeyFile /etc/apache2/ssl/ssl.key
+SSLCertificateChainFile /etc/apache2/ssl/sub.class1.server.ca.pem
+SSLCACertificateFile /etc/apache2/ssl/ca.pem
+이렇게 변경해줌
+
+SSLCertificateChainFile => 인증 기관의 체이닝. 인증 기관의 내용은 브라우저에 저장되어 있지만 인증 기관을 인증할 기관에과 또 그 기관을 인증할 기관이 있을 경우가 있는데, 여러 단계로 되어있을 때 그 단계에 대한 기술을 해줄 수 있는 기술자가 SSLCertificateChainFile임. 인증서 업체에서 제공해줌..
+
+이렇게 해놓으면 아파치 웹서버가 인증에 대한 역할을 대신해줌..
+
+
+sudo a2ensite default-ssl 
+https 프로토콜로 접근했을때 위에서 적용한 설정이 동작하도록 해야하는데 이렇게 작동하게 하는 명령어
+
+sudo service apache2 reload
+sudo service apeche2 restart
+해서 서버 다시 동작시키면 패스워드를 물어보는데 CA에서 만들때 넣었던 비번을 넣으면 인증서가 적용됨!
+
+
+# http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html
